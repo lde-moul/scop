@@ -4,7 +4,7 @@
 
 std::vector<std::string> Util::splitString(std::string const & s, char delimiter)
 {
-	std::istringstream stream(s);
+	std::istringstream stream(s + delimiter);
 
 	std::vector<std::string> words;
 	while (true)
