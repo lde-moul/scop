@@ -17,7 +17,10 @@ std::vector<std::string> Util::splitString(std::string const & s, char delimiter
 			break;
 		}
 
-		words.push_back(std::move(word));
+		if (!word.empty())
+		{
+			words.push_back(std::move(word));
+		}
 	}
 
 	return words;

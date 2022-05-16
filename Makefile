@@ -7,9 +7,11 @@ CXXFLAGS = -Wall -Wextra
 SRCDIR = src
 OBJDIR = obj
 
-SRC = Main.cpp\
+SRC = Face.cpp\
+      Main.cpp\
       Model.cpp\
       Util.cpp\
+      Vertex.cpp\
 
 INC = -Iglew
 
