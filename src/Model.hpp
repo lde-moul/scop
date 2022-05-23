@@ -27,6 +27,7 @@ public:
 	{
 	public:
 		LoadError(std::string const & message);
+
 	};
 
 	void load(std::string fileName);

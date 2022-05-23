@@ -8,6 +8,11 @@ SRCDIR = src
 OBJDIR = obj
 
 SRC = Face.cpp\
+      GLBuffer.cpp\
+      GLError.cpp\
+      GLProgram.cpp\
+      GLShader.cpp\
+      GLVAO.cpp\
       Main.cpp\
       Model.cpp\
       Util.cpp\

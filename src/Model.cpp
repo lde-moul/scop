@@ -4,15 +4,17 @@
 #include <fstream>
 #include <vector>
 
-#include <iostream> // !!!
-
 std::string Model::removeComment(std::string const & line)
 {
 	std::vector<std::string> && parts = Util::splitString(line, '#');
 	if (parts.size() > 0)
+	{
 		return parts[0];
+	}
 	else
+	{
 		return "";
+	}
 }
 
 void Model::loadInstruction(std::ifstream & file, std::vector<std::vector<std::string>> & instructions)
@@ -88,7 +90,7 @@ void Model::parseFace(std::vector<std::string> const & instruction)
 
 	for (auto param = instruction.begin() + 1; param != instruction.end(); param++)
 	{
-		face.addVertex(std::stod(*param));
+		face.addVertex(std::stoul(*param));
 	}
 
 	faces.push_back(std::move(face));

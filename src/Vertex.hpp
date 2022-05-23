@@ -9,6 +9,10 @@ private:
 	double z;
 
 public:
+	double getX() const;
+	double getY() const;
+	double getZ() const;
+
 	Vertex(double x, double y, double z);
 	~Vertex();
 

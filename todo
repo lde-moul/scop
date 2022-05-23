@@ -1,7 +1,4 @@
 Instructions:
-v
-f
-o
 s
 mtllib
 usemtl
@@ -9,3 +6,5 @@ Unknown?
 
 Sort out GLEW
 Handle window resizing?
+Check invalid vertex/face values
+Check OpenGL errors
