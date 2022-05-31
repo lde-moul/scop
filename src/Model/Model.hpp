@@ -4,7 +4,7 @@
 #include "Face.hpp"
 #include "Vertex.hpp"
 
-#include <memory>
+// #include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -21,6 +21,8 @@ private:
 	void assertParameterQuantity(std::vector<std::string> const & instruction, size_t min, size_t max);
 	void parseVertex(std::vector<std::string> const & instruction);
 	void parseFace(std::vector<std::string> const & instruction);
+	Vector getCenter() const;
+	void recenter();
 
 public:
 	class LoadError : public std::runtime_error
@@ -30,6 +32,8 @@ public:
 
 	};
 
+	std::vector<float> getVerticesAsArray() const;
+	std::vector<unsigned int> getFacesAsArray() const;
 	void load(std::string fileName);
 
 	Model();

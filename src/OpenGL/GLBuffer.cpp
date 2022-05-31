@@ -6,13 +6,21 @@ GLuint GLBuffer::getID() const
 	return id;
 }
 
+GLuint GLBuffer::getStride() const
+{
+	return stride;
+}
+
 void GLBuffer::bind()
 {
 	glBindBuffer(type, id);
 }
 
-GLBuffer::GLBuffer(GLenum type, GLvoid *data, GLsizeiptr size) : type(type)
+void GLBuffer::set(GLenum type, void const *data, GLsizeiptr size, GLsizei stride)
 {
+	this->type = type;
+	this->stride = stride;
+
 	glCreateBuffers(1, &id);
 
 	glNamedBufferData(id, size, data, GL_STATIC_DRAW);
@@ -21,6 +29,8 @@ GLBuffer::GLBuffer(GLenum type, GLvoid *data, GLsizeiptr size) : type(type)
 		throw GLError("failed to set buffer data");
 	}
 }
+
+GLBuffer::GLBuffer() : id(0) {}
 
 GLBuffer::~GLBuffer()
 {

@@ -7,16 +7,20 @@ CXXFLAGS = -Wall -Wextra
 SRCDIR = src
 OBJDIR = obj
 
-SRC = Face.cpp\
-      GLBuffer.cpp\
-      GLError.cpp\
-      GLProgram.cpp\
-      GLShader.cpp\
-      GLVAO.cpp\
+SRC = App.cpp\
       Main.cpp\
-      Model.cpp\
+      Matrix.cpp\
+      Model/Face.cpp\
+      Model/Model.cpp\
+      Model/Vertex.cpp\
+      OpenGL/GLBuffer.cpp\
+      OpenGL/GLError.cpp\
+      OpenGL/GLProgram.cpp\
+      OpenGL/GLShader.cpp\
+      OpenGL/GLVAO.cpp\
+      Test.cpp\
       Util.cpp\
-      Vertex.cpp\
+      Vector.cpp\
 
 INC = -Iglew
 

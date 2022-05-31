@@ -1,13 +1,9 @@
-#include "Model.hpp"
-#include "GLBuffer.hpp"
-#include "GLError.hpp"
-#include "GLProgram.hpp"
-#include "GLShader.hpp"
-#include "GLVAO.hpp"
+#include "App.hpp"
+#include "OpenGL/GLError.hpp"
 
-#include "glew.h"
-#include <GLFW/glfw3.h>
 #include <iostream>
+
+void test(); // !!!
 
 static GLFWwindow *createWindow()
 {
@@ -20,9 +16,7 @@ static GLFWwindow *createWindow()
 	GLFWwindow *window = glfwCreateWindow(1024, 1024, "scop", nullptr, nullptr);
 	if (window == nullptr)
 	{
-		std::cerr << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return nullptr;
+		throw GLError("failed to create window");
 	}
 
 	glfwMakeContextCurrent(window);
@@ -30,8 +24,7 @@ static GLFWwindow *createWindow()
 	GLenum error = glewInit();
 	if (error != GLEW_OK)
 	{
-		std::cerr << "Error: " << glewGetErrorString(error) << std::endl;
-		return nullptr;
+		throw GLError(reinterpret_cast<char const *>(glewGetErrorString(error)));
 	}
 
 	glViewport(0, 0, 1024, 1024);
@@ -39,40 +32,18 @@ static GLFWwindow *createWindow()
 	return window;
 }
 
-static void loadShaders(GLProgram & program, GLShader & vertexShader, GLShader & fragmentShader)
-{
-	std::string vertexShaderCode(R"""(
-		#version 450 core
-
-		layout (location = 0) in vec3 aPos;
-
-		void main()
-		{
-			gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-		}
-	)""");
-	vertexShader.load(GL_VERTEX_SHADER, vertexShaderCode);
-	program.attachShader(vertexShader);
-
-	std::string fragmentShaderCode(R"""(
-		#version 330 core
-
-		out vec4 FragColor;
-
-		void main()
-		{
-			FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-		}
-	)""");
-	fragmentShader.load(GL_FRAGMENT_SHADER, fragmentShaderCode);
-	program.attachShader(fragmentShader);
-
-	program.link();
-}
-
 int main(int argc, char **argv)
 {
-	if (argc != 2)
+	// test();
+	// return 0;
+
+	std::vector<std::string> args;
+	for (int i = 0; i < argc; i++)
+	{
+		args.push_back(argv[i]);
+	}
+
+	if (args.size() != 2)
 	{
 		std::cerr << "wrong number of arguments" << std::endl;
 		return 1;
@@ -80,49 +51,20 @@ int main(int argc, char **argv)
 
 	try
 	{
-		Model model(argv[1]);
-
-		GLFWwindow *window = createWindow();
-
-		GLProgram program;
-		GLShader vertexShader;
-		GLShader fragmentShader;
-		loadShaders(program, vertexShader, fragmentShader);
-
-		GLVAO vao;
-		vao.addAttribute(3, GL_FLOAT, GL_FALSE, 0); // Error here
-
-		float vertices[] = {
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f,  0.5f, 0.0f
-		};
-		GLBuffer vbo(GL_ARRAY_BUFFER, vertices, sizeof(vertices));
-
-		while (!glfwWindowShouldClose(window))
-		{
-			glClearColor(0.8f, 0.5f, 0.5f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-
-			vao.bind();
-			vao.bindVBO(vbo, 3 * sizeof(GLfloat));
-			program.use();
-			glDrawArrays(GL_TRIANGLES, 0, 3);
-
-			glfwSwapBuffers(window);
-			glfwPollEvents();
-		}
-
+		App app(createWindow());
+		app.run(args);
 		glfwTerminate();
 	}
 	catch (Model::LoadError & e)
 	{
 		std::cerr << e.what() << std::endl;
+		glfwTerminate();
 		return 1;
 	}
 	catch (GLError & e)
 	{
 		std::cerr << e.what() << std::endl;
+		glfwTerminate();
 		return 1;
 	}
 

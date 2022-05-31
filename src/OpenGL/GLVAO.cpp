@@ -6,9 +6,14 @@ void GLVAO::bind()
 	glBindVertexArray(id);
 }
 
-void GLVAO::bindVBO(GLBuffer & vbo, GLsizei stride)
+void GLVAO::bindVBO(GLBuffer & vbo)
 {
-	glVertexArrayVertexBuffer(id, 0, vbo.getID(), 0, stride);
+	glVertexArrayVertexBuffer(id, 0, vbo.getID(), 0, vbo.getStride());
+}
+
+void GLVAO::bindEBO(GLBuffer & ebo)
+{
+	glVertexArrayElementBuffer(id, ebo.getID());
 }
 
 void GLVAO::addAttribute(GLint size, GLenum type, GLboolean normalized, GLuint offset)

@@ -1,8 +1,65 @@
 #include "Model.hpp"
-#include "Util.hpp"
+#include "../Util.hpp"
+#include "../Vector.hpp"
 
+#include <algorithm>
 #include <fstream>
-#include <vector>
+#include <limits>
+
+std::vector<float> Model::getVerticesAsArray() const
+{
+	std::vector<float> array;
+
+	for (auto const & vertex : vertices)
+	{
+		Vector pos = vertex.getPosition();
+		array.push_back(pos.getX());
+		array.push_back(pos.getY());
+		array.push_back(pos.getZ());
+	}
+
+	return array;
+}
+
+std::vector<unsigned int> Model::getFacesAsArray() const
+{
+	std::vector<unsigned int> array;
+
+	for (auto const & face : faces)
+	{
+		for (auto const & id : face.getVertexIDs())
+		{
+			array.push_back(id - 1);
+		}
+	}
+
+	return array;
+}
+
+Vector Model::getCenter() const
+{
+	constexpr float floatMin = std::numeric_limits<float>::min();
+	constexpr float floatMax = std::numeric_limits<float>::max();
+	auto corner1 = Vector(floatMax, floatMax, floatMax, 0.f);
+	auto corner2 = Vector(floatMin, floatMin, floatMin, 0.f);
+
+	for (auto const & vertex : vertices)
+	{
+		Vector pos1 = vertex.getPosition();
+		float x1 = std::min(pos1.getX(), corner1.getX());
+		float y1 = std::min(pos1.getY(), corner1.getY());
+		float z1 = std::min(pos1.getZ(), corner1.getZ());
+		corner1 = Vector(x1, y1, z1, pos1.getW());
+
+		Vector pos2 = vertex.getPosition();
+		float x2 = std::max(pos2.getX(), corner2.getX());
+		float y2 = std::max(pos2.getY(), corner2.getY());
+		float z2 = std::max(pos2.getZ(), corner2.getZ());
+		corner2 = Vector(x2, y2, z2, pos2.getW());
+	}
+
+	return (corner1 + corner2) / 2;
+}
 
 std::string Model::removeComment(std::string const & line)
 {
@@ -75,11 +132,11 @@ void Model::parseVertex(std::vector<std::string> const & instruction)
 {
 	assertParameterQuantity(instruction, 3, 3);
 
-	double x = std::stod(instruction[1]);
-	double y = std::stod(instruction[2]);
-	double z = std::stod(instruction[3]);
+	float x = std::stof(instruction[1]);
+	float y = std::stof(instruction[2]);
+	float z = std::stof(instruction[3]);
 
-	vertices.emplace_back(Vertex(x, y, z));
+	vertices.emplace_back(Vertex(Vector(x, y, z, 0.f)));
 }
 
 void Model::parseFace(std::vector<std::string> const & instruction)
@@ -87,13 +144,25 @@ void Model::parseFace(std::vector<std::string> const & instruction)
 	assertParameterQuantity(instruction, 3, 4);
 
 	Face face;
-
 	for (auto param = instruction.begin() + 1; param != instruction.end(); param++)
 	{
 		face.addVertex(std::stoul(*param));
 	}
 
-	faces.push_back(std::move(face));
+	std::vector<Face> subFaces = face.getTriangulatedFaces();
+	for (auto const & subFace : subFaces)
+	{
+		faces.push_back(std::move(subFace));
+	}
+}
+
+void Model::recenter()
+{
+	Vector center = getCenter();
+	for (auto & vertex : vertices)
+	{
+		vertex.setPosition(vertex.getPosition() - center);
+	}
 }
 
 void Model::load(std::string fileName)
@@ -115,6 +184,8 @@ void Model::load(std::string fileName)
 			parseFace(instruction);
 		}
 	}
+
+	recenter();
 }
 
 Model::Model() {}

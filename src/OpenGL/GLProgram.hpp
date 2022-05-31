@@ -2,6 +2,7 @@
 #define SCOP_GLPROGRAM_HPP
 
 #include "GLShader.hpp"
+#include "../Matrix.hpp"
 
 #include "glew.h"
 #include <GLFW/glfw3.h>
@@ -15,6 +16,7 @@ public:
 	void attachShader(GLShader const & shader);
 	void link();
 	void use();
+	void setUniform(std::string const & name, Matrix const & matrix);
 
 	GLProgram();
 	~GLProgram();

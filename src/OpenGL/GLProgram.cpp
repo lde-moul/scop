@@ -25,6 +25,12 @@ void GLProgram::use()
 	glUseProgram(id);
 }
 
+void GLProgram::setUniform(std::string const & name, Matrix const & matrix)
+{
+	GLint location = glGetUniformLocation(id, name.c_str());
+	glProgramUniformMatrix4fv(id, location, 1, GL_TRUE, matrix.getArray());
+}
+
 GLProgram::GLProgram()
 {
 	id = glCreateProgram();

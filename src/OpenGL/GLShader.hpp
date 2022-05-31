@@ -8,7 +8,6 @@
 class GLShader
 {
 private:
-	GLenum type;
 	GLuint id;
 
 public:

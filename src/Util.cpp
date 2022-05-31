@@ -2,6 +2,11 @@
 
 #include <sstream>
 
+float Util::degreesToRadians(float degrees)
+{
+	return degrees / 180.f * Util::PI;
+}
+
 std::vector<std::string> Util::splitString(std::string const & s, char delimiter)
 {
 	std::istringstream stream(s + delimiter);

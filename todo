@@ -8,3 +8,6 @@ Sort out GLEW
 Handle window resizing?
 Check invalid vertex/face values
 Check OpenGL errors
+Remove Test.cpp
+Remove dump methods
+Remove model matrix?

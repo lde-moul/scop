@@ -29,7 +29,7 @@ void GLShader::load(GLenum type, std::string const & code)
 	}
 }
 
-GLShader::GLShader() : type(0), id(0) {}
+GLShader::GLShader() : id(0) {}
 
 GLShader::~GLShader()
 {

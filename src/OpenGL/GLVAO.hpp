@@ -14,7 +14,8 @@ private:
 
 public:
 	void bind();
-	void bindVBO(GLBuffer & vbo, GLsizei stride);
+	void bindVBO(GLBuffer & vbo);
+	void bindEBO(GLBuffer & ebo);
 	void addAttribute(GLint size, GLenum type, GLboolean normalized, GLuint offset);
 
 	GLVAO();
