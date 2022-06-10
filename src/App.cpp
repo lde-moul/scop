@@ -59,11 +59,11 @@ void App::handleCameraRotation(double timeStep, double cursorMoveX, double curso
 	Vector keyboardRotation;
 	if (glfwGetKey(window, GLFW_KEY_A) || glfwGetKey(window, GLFW_KEY_LEFT))
 	{
-		keyboardRotation = keyboardRotation + Vector(0, -1, 0);
+		keyboardRotation = keyboardRotation + Vector(0, 1, 0);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) || glfwGetKey(window, GLFW_KEY_RIGHT))
 	{
-		keyboardRotation = keyboardRotation + Vector(0, 1, 0);
+		keyboardRotation = keyboardRotation + Vector(0, -1, 0);
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) || glfwGetKey(window, GLFW_KEY_UP))
 	{
@@ -73,6 +73,7 @@ void App::handleCameraRotation(double timeStep, double cursorMoveX, double curso
 	{
 		keyboardRotation = keyboardRotation + Vector(-1, 0, 0);
 	}
+	Vector mouseRotation = Vector(-cursorMoveY, -cursorMoveX, 0) / 32;
 
 	Vector mouseRotation = Vector(-cursorMoveY, cursorMoveX, 0) / 32;
 

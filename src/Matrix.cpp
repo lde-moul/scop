@@ -31,10 +31,10 @@ Matrix Matrix::rotationY(float angle)
 {
 	Matrix matrix(true);
 
-	matrix(0, 0) = std::sin(angle);
-	matrix(2, 0) = std::cos(angle);
-	matrix(0, 2) = -std::cos(angle);
-	matrix(2, 2) = std::sin(angle);
+	matrix(0, 0) = std::cos(angle);
+	matrix(2, 0) = std::sin(angle);
+	matrix(0, 2) = -std::sin(angle);
+	matrix(2, 2) = std::cos(angle);
 
 	return matrix;
 }
