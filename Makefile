@@ -18,6 +18,7 @@ SRC = App.cpp\
       OpenGL/GLProgram.cpp\
       OpenGL/GLShader.cpp\
       OpenGL/GLVAO.cpp\
+      TGA.cpp\
       Util.cpp\
       Vector.cpp\
 
