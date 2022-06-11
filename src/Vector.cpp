@@ -6,22 +6,22 @@
 
 float Vector::getX() const
 {
-    return x;
+	return x;
 }
 
 float Vector::getY() const
 {
-    return y;
+	return y;
 }
 
 float Vector::getZ() const
 {
-    return z;
+	return z;
 }
 
 float Vector::getW() const
 {
-    return w;
+	return w;
 }
 
 float Vector::getLength() const
