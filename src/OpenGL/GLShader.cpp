@@ -8,6 +8,8 @@ GLuint GLShader::getID() const
 
 void GLShader::load(GLenum type, std::string const & code)
 {
+	glDeleteShader(id);
+
 	id = glCreateShader(type);
 	if (id == 0)
 	{

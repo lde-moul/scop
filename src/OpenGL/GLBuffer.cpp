@@ -18,6 +18,8 @@ void GLBuffer::bind()
 
 void GLBuffer::set(GLenum type, void const *data, GLsizeiptr size, GLsizei stride)
 {
+	glDeleteBuffers(1, &id);
+
 	this->type = type;
 	this->stride = stride;
 
