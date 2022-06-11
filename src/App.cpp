@@ -84,16 +84,16 @@ void App::handleCameraRotation(double timeStep, double cursorMoveX, double curso
 	{
 		keyboardRotation = keyboardRotation + Vector(-1, 0, 0);
 	}
-	Vector mouseRotation = Vector(-cursorMoveY, -cursorMoveX, 0) / 32;
+	keyboardRotation = keyboardRotation / 2;
 
-	Vector mouseRotation = Vector(-cursorMoveY, cursorMoveX, 0) / 32;
+	Vector mouseRotation = Vector(-cursorMoveY, -cursorMoveX, 0) / 32;
 
 	cameraRotation = cameraRotation + (keyboardRotation + mouseRotation) * 2 * Util::PI * getSpeedFactor() * timeStep;
 }
 
 void App::handleScrolling(double, double y)
 {
-	cameraZoom += y * getSpeedFactor();
+	cameraZoom += y / 4 * getSpeedFactor();
 }
 
 float App::getSpeedFactor()
