@@ -49,8 +49,4 @@ void Vector::dump()
 
 Vector::Vector(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 
-Vector::Vector(float x, float y, float z = 0.f) : Vector(x, y, z, 0.f) {}
-
-Vector::Vector() : Vector(0.f, 0.f, 0.f, 0.f) {}
-
 Vector::~Vector() {}

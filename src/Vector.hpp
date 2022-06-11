@@ -19,9 +19,7 @@ public:
 	Vector operator/(float other) const;
 	void dump();
 
-	Vector(float x, float y, float z, float w);
-	Vector(float x, float y, float z);
-	Vector();
+	Vector(float x = 0.f, float y = 0.f, float z = 0.f, float w = 0.f);
 	~Vector();
 
 };
