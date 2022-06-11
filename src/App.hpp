@@ -5,7 +5,9 @@
 #include "OpenGL/GLBuffer.hpp"
 #include "OpenGL/GLProgram.hpp"
 #include "OpenGL/GLShader.hpp"
+#include "OpenGL/GLTexture.hpp"
 #include "OpenGL/GLVAO.hpp"
+#include "TGA.hpp"
 #include "Vector.hpp"
 
 #include "glew.h"
@@ -16,11 +18,21 @@
 class App
 {
 private:
+	enum class ViewType
+	{
+		Uniform,
+		Colors,
+		Texture,
+		Wireframe
+	};
+
 	GLFWwindow *window;
 	Model model;
+	TGA tga;
 
 	Vector cameraRotation;
 	float cameraZoom;
+	ViewType viewType;
 
 	double oldCursorX;
 	double oldCursorY;
@@ -32,6 +44,7 @@ private:
 	GLVAO vao;
 	GLBuffer vbo;
 	GLBuffer ebo;
+	GLTexture texture;
 
 	void loadShaders();
 	void handleInputs(double timeStep);

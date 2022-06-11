@@ -56,6 +56,12 @@ int main(int argc, char **argv)
 		glfwTerminate();
 		return 1;
 	}
+	catch (TGA::LoadError & e)
+	{
+		std::cerr << e.what() << std::endl;
+		glfwTerminate();
+		return 1;
+	}
 	catch (GLError & e)
 	{
 		std::cerr << e.what() << std::endl;

@@ -12,7 +12,7 @@ private:
 
 public:
 	GLuint getID() const;
-	void load(GLenum type, std::string const & code);
+	void load(GLenum type, std::string const & fileName);
 
 	GLShader();
 	~GLShader();

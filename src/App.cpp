@@ -6,32 +6,20 @@
 
 void App::loadShaders()
 {
-	std::string vertexShaderCode(R"""(
-		#version 450 core
+	program.reset();
 
-		layout (location = 0) in vec3 position;
-
-		uniform mat4 matrix;
-
-		void main()
-		{
-			gl_Position = matrix * vec4(position, 1.f);
-		}
-	)""");
-	vertexShader.load(GL_VERTEX_SHADER, vertexShaderCode);
+	vertexShader.load(GL_VERTEX_SHADER, "resources/Shader.vs");
 	program.attachShader(vertexShader);
 
-	std::string fragmentShaderCode(R"""(
-		#version 450 core
-
-		out vec4 FragColor;
-
-		void main()
-		{
-			FragColor = vec4(0.4f, 0.4f, 0.8f, 1.0f);
-		}
-	)""");
-	fragmentShader.load(GL_FRAGMENT_SHADER, fragmentShaderCode);
+	std::string fileName;
+	switch (viewType)
+	{
+		case ViewType::Uniform  : fileName = "Uniform.fs"; break;
+		case ViewType::Colors   : fileName = "Colors.fs" ; break;
+		case ViewType::Texture  : fileName = "Texture.fs"; break;
+		case ViewType::Wireframe: fileName = "Colors.fs" ; break;
+	}
+	fragmentShader.load(GL_FRAGMENT_SHADER, "resources/" + fileName);
 	program.attachShader(fragmentShader);
 
 	program.link();
@@ -42,6 +30,29 @@ void App::handleInputs(double timeStep)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 	{
 		glfwSetWindowShouldClose(window, true);
+	}
+
+	ViewType newViewType = viewType;
+	if (glfwGetKey(window, GLFW_KEY_1))
+	{
+		newViewType = ViewType::Uniform;
+	}
+	if (glfwGetKey(window, GLFW_KEY_2))
+	{
+		newViewType = ViewType::Colors;
+	}
+	if (glfwGetKey(window, GLFW_KEY_3))
+	{
+		newViewType = ViewType::Texture;
+	}
+	if (glfwGetKey(window, GLFW_KEY_4))
+	{
+		newViewType = ViewType::Wireframe;
+	}
+	if (newViewType != viewType)
+	{
+		viewType = newViewType;
+		loadShaders();
 	}
 
 	double cursorX, cursorY;
@@ -118,8 +129,17 @@ void App::drawModel(size_t numElements)
 	vao.bindVBO(vbo);
 	vao.bindEBO(ebo);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glLineWidth(1.f);
+	if (viewType == ViewType::Wireframe)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glLineWidth(1.f);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	texture.bind();
 
 	glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_INT, 0);
 }
@@ -133,16 +153,24 @@ void App::run(std::vector<std::string> const & args)
 	glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
 
 	model.load(args[1]);
+	tga.load("resources/norminet.tga");
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_GREATER);
+	glClearDepthf(0.f);
 
 	loadShaders();
 
 	vao.addAttribute(3, GL_FLOAT, GL_FALSE, 0);
+	vao.addAttribute(2, GL_FLOAT, GL_FALSE, 3 * sizeof(float));
 
 	std::vector<float> vertices = model.getVerticesAsArray();
-	vbo.set(GL_ARRAY_BUFFER, vertices.data(), vertices.size() * sizeof(float), 3 * sizeof(float));
+	vbo.set(GL_ARRAY_BUFFER, vertices.data(), vertices.size() * sizeof(float), 5 * sizeof(float));
 
 	std::vector<unsigned int> vertexIndices = model.getFacesAsArray();
 	ebo.set(GL_ELEMENT_ARRAY_BUFFER, vertexIndices.data(), vertexIndices.size() * sizeof(unsigned int), sizeof(unsigned int));
+
+	texture.set(tga);
 
 	double lastFrame = glfwGetTime();
 	while (!glfwWindowShouldClose(window))
@@ -152,7 +180,7 @@ void App::run(std::vector<std::string> const & args)
 		lastFrame = now;
 
 		glClearColor(0.2f, 0.2f, 0.25f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		drawModel(vertexIndices.size());
 
@@ -161,6 +189,6 @@ void App::run(std::vector<std::string> const & args)
 	}
 }
 
-App::App(GLFWwindow *window) : window(window), cameraRotation(0, 0, 0), cameraZoom(-5) {}
+App::App(GLFWwindow *window) : window(window), cameraRotation(0, 0, 0), cameraZoom(-5), viewType(ViewType::Colors) {}
 
 App::~App() {}

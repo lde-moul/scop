@@ -7,10 +7,13 @@ class Vertex
 {
 private:
 	Vector position;
+	Vector textureCoordinates;
 
 public:
 	Vector getPosition() const;
 	void setPosition(Vector position);
+	Vector getTextureCoordinates() const;
+	void setTextureCoordinates(Vector coordinates);
 
 	Vertex(Vector position);
 	~Vertex();

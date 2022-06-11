@@ -13,6 +13,8 @@ public:
 	float getY() const;
 	float getZ() const;
 	float getW() const;
+	float getLength() const;
+	Vector normalize() const;
 	Vector operator+(Vector const & other) const;
 	Vector operator-(Vector const & other) const;
 	Vector operator*(float other) const;

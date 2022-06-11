@@ -4,7 +4,6 @@
 #include "Face.hpp"
 #include "Vertex.hpp"
 
-// #include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -23,6 +22,7 @@ private:
 	void parseFace(std::vector<std::string> const & instruction);
 	Vector getCenter() const;
 	void recenter();
+	void calculateTextureCoordinates();
 
 public:
 	class LoadError : public std::runtime_error

@@ -16,6 +16,7 @@ public:
 	void attachShader(GLShader const & shader);
 	void link();
 	void use();
+	void reset();
 	void setUniform(std::string const & name, Matrix const & matrix);
 
 	GLProgram();

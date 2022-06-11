@@ -1,5 +1,7 @@
 #include "Vector.hpp"
 
+#include <cmath>
+
 #include <iostream> // !!!
 
 float Vector::getX() const
@@ -20,6 +22,17 @@ float Vector::getZ() const
 float Vector::getW() const
 {
     return w;
+}
+
+float Vector::getLength() const
+{
+	return std::sqrt(x * x + y * y + z * z);
+}
+
+Vector Vector::normalize() const
+{
+	float length = getLength();
+	return Vector(x / length, y / length, z / length, w);
 }
 
 Vector Vector::operator+(Vector const & other) const

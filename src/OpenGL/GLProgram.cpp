@@ -20,6 +20,17 @@ void GLProgram::link()
 	}
 }
 
+void GLProgram::reset()
+{
+	glDeleteProgram(id);
+
+	id = glCreateProgram();
+	if (id == 0)
+	{
+		throw GLError("failed to create program");
+	}
+}
+
 void GLProgram::use()
 {
 	glUseProgram(id);

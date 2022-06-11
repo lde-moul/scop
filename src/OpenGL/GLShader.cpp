@@ -1,14 +1,32 @@
 #include "GLError.hpp"
 #include "GLShader.hpp"
 
+#include <fstream>
+#include <sstream>
+
 GLuint GLShader::getID() const
 {
 	return id;
 }
 
-void GLShader::load(GLenum type, std::string const & code)
+void GLShader::load(GLenum type, std::string const & fileName)
 {
 	glDeleteShader(id);
+
+	std::ifstream file(fileName);
+	if (file.fail())
+	{
+		throw GLError("failed to open shader file");
+	}
+
+	std::ostringstream codeStream;
+	codeStream << file.rdbuf();
+	if (codeStream.fail())
+	{
+		throw GLError("failed to read shader file");
+	}
+
+	std::string code = codeStream.str();
 
 	id = glCreateShader(type);
 	if (id == 0)

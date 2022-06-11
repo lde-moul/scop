@@ -3,6 +3,7 @@
 #include "../Vector.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <fstream>
 #include <limits>
 
@@ -16,6 +17,10 @@ std::vector<float> Model::getVerticesAsArray() const
 		array.push_back(pos.getX());
 		array.push_back(pos.getY());
 		array.push_back(pos.getZ());
+
+		Vector texCoord = vertex.getTextureCoordinates();
+		array.push_back(texCoord.getX());
+		array.push_back(texCoord.getY());
 	}
 
 	return array;
@@ -165,6 +170,18 @@ void Model::recenter()
 	}
 }
 
+void Model::calculateTextureCoordinates()
+{
+	Vector center = getCenter();
+	for (auto & vertex : vertices)
+	{
+		Vector normal = (vertex.getPosition() - center).normalize();
+		float s = std::asin(normal.getX()) / Util::PI + 0.5f;
+		float t = std::asin(normal.getY()) / Util::PI + 0.5f;
+		vertex.setTextureCoordinates(Vector(s, t));
+	}
+}
+
 void Model::load(std::string fileName)
 {
 	std::vector<std::vector<std::string>> && instructions = loadInstructions(fileName);
@@ -186,6 +203,7 @@ void Model::load(std::string fileName)
 	}
 
 	recenter();
+	calculateTextureCoordinates();
 }
 
 Model::Model() {}
