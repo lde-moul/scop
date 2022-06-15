@@ -15,42 +15,6 @@ Matrix Matrix::translation(float x, float y, float z)
 	return matrix;
 }
 
-Matrix Matrix::rotationX(float angle)
-{
-	Matrix matrix(true);
-
-	matrix(1, 1) = std::cos(angle);
-	matrix(2, 1) = -std::sin(angle);
-	matrix(1, 2) = std::sin(angle);
-	matrix(2, 2) = std::cos(angle);
-
-	return matrix;
-}
-
-Matrix Matrix::rotationY(float angle)
-{
-	Matrix matrix(true);
-
-	matrix(0, 0) = std::cos(angle);
-	matrix(2, 0) = std::sin(angle);
-	matrix(0, 2) = -std::sin(angle);
-	matrix(2, 2) = std::cos(angle);
-
-	return matrix;
-}
-
-Matrix Matrix::rotationZ(float angle)
-{
-	Matrix matrix(true);
-
-	matrix(0, 0) = std::cos(angle);
-	matrix(1, 0) = -std::sin(angle);
-	matrix(0, 1) = std::sin(angle);
-	matrix(1, 1) = std::cos(angle);
-
-	return matrix;
-}
-
 Matrix Matrix::scaling(float x, float y, float z)
 {
 	Matrix matrix(true);

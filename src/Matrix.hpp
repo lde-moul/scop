@@ -10,9 +10,6 @@ private:
 
 public:
 	static Matrix translation(float x, float y, float z);
-	static Matrix rotationX(float angle);
-	static Matrix rotationY(float angle);
-	static Matrix rotationZ(float angle);
 	static Matrix scaling(float x, float y, float z);
 	static Matrix perspective(float fov, float aspectRatio, float near, float far);
 
