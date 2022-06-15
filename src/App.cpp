@@ -2,6 +2,8 @@
 #include "OpenGL/GLError.hpp"
 #include "Util.hpp"
 
+#include <cmath>
+
 #include <iostream> // !!!
 
 void App::loadShaders()
@@ -80,6 +82,7 @@ void App::handleCameraRotation(double timeStep, double cursorMoveX, double curso
 	Vector mouseAxis = Vector(cursorMoveY, cursorMoveX) / 32;
 
 	cameraSimpleRotation = cameraSimpleRotation + keyboardAxis / 2 * speed;
+	cameraSimpleRotation = Vector(std::fmod(cameraSimpleRotation.x, 2 * Util::PI), std::fmod(cameraSimpleRotation.y, 2 * Util::PI));
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
 		cameraSimpleRotation = cameraSimpleRotation + mouseAxis * speed;
@@ -90,6 +93,8 @@ void App::handleCameraRotation(double timeStep, double cursorMoveX, double curso
 void App::handleScrolling(double, double y)
 {
 	cameraZoom += y / 4 * getSpeedFactor();
+	cameraZoom = std::min(std::max(cameraZoom, -100.f), 10.f);
+	std::cout << cameraZoom << std::endl;
 }
 
 float App::getSpeedFactor()
