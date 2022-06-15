@@ -1,15 +1,15 @@
 #ifndef SCOP_APP_HPP
 #define SCOP_APP_HPP
 
+#include "Math/Quaternion.hpp"
+#include "Math/Vector.hpp"
 #include "Model/Model.hpp"
 #include "OpenGL/GLBuffer.hpp"
 #include "OpenGL/GLProgram.hpp"
 #include "OpenGL/GLShader.hpp"
 #include "OpenGL/GLTexture.hpp"
 #include "OpenGL/GLVAO.hpp"
-#include "Quaternion.hpp"
 #include "TGA.hpp"
-#include "Vector.hpp"
 
 #include "glew.h"
 #include <GLFW/glfw3.h>

@@ -1,7 +1,7 @@
 #ifndef SCOP_VERTEX_HPP
 #define SCOP_VERTEX_HPP
 
-#include "../Vector.hpp"
+#include "../Math/Vector.hpp"
 
 class Vertex
 {

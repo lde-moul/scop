@@ -1,6 +1,6 @@
 #include "Model.hpp"
+#include "../Math/Vector.hpp"
 #include "../Util.hpp"
-#include "../Vector.hpp"
 
 #include <algorithm>
 #include <cmath>

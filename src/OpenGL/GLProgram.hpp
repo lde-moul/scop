@@ -2,7 +2,7 @@
 #define SCOP_GLPROGRAM_HPP
 
 #include "GLShader.hpp"
-#include "../Matrix.hpp"
+#include "../Math/Matrix.hpp"
 
 #include "glew.h"
 #include <GLFW/glfw3.h>
