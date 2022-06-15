@@ -51,8 +51,7 @@ private:
 
 	void loadShaders();
 	void handleTick(double timeStep);
-	void handleInputs(double timeStep);
-	void handleCameraRotation(double timeStep, double cursorMoveX, double cursorMoveY);
+	void handleCameraRotation(double timeStep);
 	float getSpeedFactor();
 	void drawModel(size_t numElements);
 

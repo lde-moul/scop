@@ -29,32 +29,11 @@ void App::loadShaders()
 
 void App::handleTick(double timeStep)
 {
-	handleInputs(timeStep);
-
-	if (autoRotating)
-		cameraDirection = Quaternion::getRotation(Vector(0, 1, 0), 2 * Util::PI / 10 * timeStep) * cameraDirection;
+	handleCameraRotation(timeStep);
 }
 
-void App::handleInputs(double timeStep)
+void App::handleCameraRotation(double timeStep)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
-		glfwSetWindowShouldClose(window, true);
-
-	ViewType newViewType = viewType;
-	if (glfwGetKey(window, GLFW_KEY_1))
-		newViewType = ViewType::Uniform;
-	if (glfwGetKey(window, GLFW_KEY_2))
-		newViewType = ViewType::Colors;
-	if (glfwGetKey(window, GLFW_KEY_3))
-		newViewType = ViewType::Texture;
-	if (glfwGetKey(window, GLFW_KEY_4))
-		newViewType = ViewType::Wireframe;
-	if (newViewType != viewType)
-	{
-		viewType = newViewType;
-		loadShaders();
-	}
-
 	double cursorX, cursorY;
 	glfwGetCursorPos(window, &cursorX, &cursorY);
 	double cursorMoveX = cursorX - oldCursorX;
@@ -62,11 +41,6 @@ void App::handleInputs(double timeStep)
 	oldCursorX = cursorX;
 	oldCursorY = cursorY;
 
-	handleCameraRotation(timeStep, cursorMoveX, cursorMoveY);
-}
-
-void App::handleCameraRotation(double timeStep, double cursorMoveX, double cursorMoveY)
-{
 	float speed = 2 * Util::PI * getSpeedFactor() * timeStep;
 
 	if (glfwGetKey(window, GLFW_KEY_SPACE))
@@ -96,6 +70,9 @@ void App::handleCameraRotation(double timeStep, double cursorMoveX, double curso
 		cameraSimpleRotation = cameraSimpleRotation + mouseAxis * speed;
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))
 		cameraDirection = Quaternion::getRotation(mouseAxis, speed * mouseAxis.getLength()) * cameraDirection;
+
+	if (autoRotating)
+		cameraDirection = Quaternion::getRotation(Vector(0, 1, 0), 2 * Util::PI / 10 * timeStep) * cameraDirection;
 }
 
 void App::handleScrolling(double, double y)
@@ -106,8 +83,36 @@ void App::handleScrolling(double, double y)
 
 void App::handleKey(int key, int, int action, int)
 {
-	if (key == GLFW_KEY_R && action == GLFW_PRESS)
+	if (action != GLFW_PRESS)
+		return;
+
+	switch (key)
+	{
+	case GLFW_KEY_ESCAPE:
+		glfwSetWindowShouldClose(window, true);
+		break;
+
+	case GLFW_KEY_1:
+		viewType = ViewType::Uniform;
+		loadShaders();
+		break;
+	case GLFW_KEY_2:
+		viewType = ViewType::Colors;
+		loadShaders();
+		break;
+	case GLFW_KEY_3:
+		viewType = ViewType::Texture;
+		loadShaders();
+		break;
+	case GLFW_KEY_4:
+		viewType = ViewType::Wireframe;
+		loadShaders();
+		break;
+
+	case GLFW_KEY_R:
 		autoRotating = !autoRotating;
+		break;
+	}
 }
 
 float App::getSpeedFactor()
