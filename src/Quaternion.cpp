@@ -17,26 +17,6 @@ Quaternion Quaternion::getRotation(Vector axis, float angle)
 	);
 }
 
-float Quaternion::getX() const
-{
-	return x;
-}
-
-float Quaternion::getY() const
-{
-	return y;
-}
-
-float Quaternion::getZ() const
-{
-	return z;
-}
-
-float Quaternion::getW() const
-{
-	return w;
-}
-
 Matrix Quaternion::getMatrix() const
 {
 	Matrix matrix;

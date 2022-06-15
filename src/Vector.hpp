@@ -9,10 +9,6 @@ public:
 	float z;
 	float w;
 
-	float getX() const;
-	float getY() const;
-	float getZ() const;
-	float getW() const;
 	float getLength() const;
 	Vector normalize() const;
 	Vector operator+(Vector const & other) const;

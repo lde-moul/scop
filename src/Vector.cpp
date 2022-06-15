@@ -4,26 +4,6 @@
 
 #include <iostream> // !!!
 
-float Vector::getX() const
-{
-	return x;
-}
-
-float Vector::getY() const
-{
-	return y;
-}
-
-float Vector::getZ() const
-{
-	return z;
-}
-
-float Vector::getW() const
-{
-	return w;
-}
-
 float Vector::getLength() const
 {
 	return std::sqrt(x * x + y * y + z * z);

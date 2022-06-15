@@ -14,13 +14,13 @@ std::vector<float> Model::getVerticesAsArray() const
 	for (auto const & vertex : vertices)
 	{
 		Vector pos = vertex.getPosition();
-		array.push_back(pos.getX());
-		array.push_back(pos.getY());
-		array.push_back(pos.getZ());
+		array.push_back(pos.x);
+		array.push_back(pos.y);
+		array.push_back(pos.z);
 
 		Vector texCoord = vertex.getTextureCoordinates();
-		array.push_back(texCoord.getX());
-		array.push_back(texCoord.getY());
+		array.push_back(texCoord.x);
+		array.push_back(texCoord.y);
 	}
 
 	return array;
@@ -51,16 +51,16 @@ Vector Model::getCenter() const
 	for (auto const & vertex : vertices)
 	{
 		Vector pos1 = vertex.getPosition();
-		float x1 = std::min(pos1.getX(), corner1.getX());
-		float y1 = std::min(pos1.getY(), corner1.getY());
-		float z1 = std::min(pos1.getZ(), corner1.getZ());
-		corner1 = Vector(x1, y1, z1, pos1.getW());
+		float x1 = std::min(pos1.x, corner1.x);
+		float y1 = std::min(pos1.y, corner1.y);
+		float z1 = std::min(pos1.z, corner1.z);
+		corner1 = Vector(x1, y1, z1, pos1.w);
 
 		Vector pos2 = vertex.getPosition();
-		float x2 = std::max(pos2.getX(), corner2.getX());
-		float y2 = std::max(pos2.getY(), corner2.getY());
-		float z2 = std::max(pos2.getZ(), corner2.getZ());
-		corner2 = Vector(x2, y2, z2, pos2.getW());
+		float x2 = std::max(pos2.x, corner2.x);
+		float y2 = std::max(pos2.y, corner2.y);
+		float z2 = std::max(pos2.z, corner2.z);
+		corner2 = Vector(x2, y2, z2, pos2.w);
 	}
 
 	return (corner1 + corner2) / 2;
@@ -176,8 +176,8 @@ void Model::calculateTextureCoordinates()
 	for (auto & vertex : vertices)
 	{
 		Vector normal = (vertex.getPosition() - center).normalize();
-		float s = std::asin(normal.getX()) / Util::PI + 0.5f;
-		float t = std::asin(normal.getY()) / Util::PI + 0.5f;
+		float s = std::asin(normal.x) / Util::PI + 0.5f;
+		float t = std::asin(normal.y) / Util::PI + 0.5f;
 		vertex.setTextureCoordinates(Vector(s, t));
 	}
 }

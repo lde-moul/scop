@@ -14,10 +14,6 @@ public:
 
 	static Quaternion getRotation(Vector axis, float angle);
 
-	float getX() const;
-	float getY() const;
-	float getZ() const;
-	float getW() const;
 	Matrix getMatrix() const;
 	Quaternion normalize() const;
 	Quaternion operator*(Quaternion const & other) const;
