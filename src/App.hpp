@@ -7,6 +7,7 @@
 #include "OpenGL/GLShader.hpp"
 #include "OpenGL/GLTexture.hpp"
 #include "OpenGL/GLVAO.hpp"
+#include "Quaternion.hpp"
 #include "TGA.hpp"
 #include "Vector.hpp"
 
@@ -30,7 +31,8 @@ private:
 	Model model;
 	TGA tga;
 
-	Vector cameraRotation;
+	Quaternion cameraDirection;
+	Vector cameraSimpleRotation;
 	float cameraZoom;
 	ViewType viewType;
 

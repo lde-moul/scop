@@ -67,28 +67,45 @@ void App::handleInputs(double timeStep)
 
 void App::handleCameraRotation(double timeStep, double cursorMoveX, double cursorMoveY)
 {
-	Vector keyboardRotation;
+	float speed = 2 * Util::PI * getSpeedFactor() * timeStep;
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE))
+	{
+		cameraDirection = Quaternion();
+		cameraSimpleRotation = Vector();
+	}
+
+	Vector keyboardAxis;
 	if (glfwGetKey(window, GLFW_KEY_A) || glfwGetKey(window, GLFW_KEY_LEFT))
 	{
-		keyboardRotation = keyboardRotation + Vector(0, 1, 0);
+		keyboardAxis = keyboardAxis + Vector(0, -1);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) || glfwGetKey(window, GLFW_KEY_RIGHT))
 	{
-		keyboardRotation = keyboardRotation + Vector(0, -1, 0);
+		keyboardAxis = keyboardAxis + Vector(0, 1);
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) || glfwGetKey(window, GLFW_KEY_UP))
 	{
-		keyboardRotation = keyboardRotation + Vector(1, 0, 0);
+		keyboardAxis = keyboardAxis + Vector(-1, 0);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) || glfwGetKey(window, GLFW_KEY_DOWN))
 	{
-		keyboardRotation = keyboardRotation + Vector(-1, 0, 0);
+		keyboardAxis = keyboardAxis + Vector(1, 0);
 	}
-	keyboardRotation = keyboardRotation / 2;
+	keyboardAxis = keyboardAxis.normalize();
 
-	Vector mouseRotation = Vector(-cursorMoveY, -cursorMoveX, 0) / 32;
+	Vector mouseAxis = Vector(cursorMoveY, cursorMoveX) / 32;
 
-	cameraRotation = cameraRotation + (keyboardRotation + mouseRotation) * 2 * Util::PI * getSpeedFactor() * timeStep;
+	cameraSimpleRotation = cameraSimpleRotation + keyboardAxis / 2 * speed;
+
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
+	{
+		cameraSimpleRotation = cameraSimpleRotation + mouseAxis * speed;
+	}
+	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))
+	{
+		cameraDirection = Quaternion::getRotation(mouseAxis, speed * mouseAxis.getLength()) * cameraDirection;
+	}
 }
 
 void App::handleScrolling(double, double y)
@@ -116,9 +133,10 @@ void App::drawModel(size_t numElements)
 	Matrix projection = Matrix::perspective(Util::degreesToRadians(90), aspectRatio, 0.1f, 100.f);
 
 	Matrix viewTranslation = Matrix::translation(0, 0, cameraZoom);
-	Matrix viewRotationX = Matrix::rotationX(cameraRotation.getX());
-	Matrix viewRotationY = Matrix::rotationY(cameraRotation.getY());
-	Matrix view = viewTranslation * viewRotationX * viewRotationY;
+	Matrix viewRotationX = Quaternion::getRotation(Vector(cameraSimpleRotation.x, 0), std::abs(cameraSimpleRotation.x)).getMatrix();
+	Matrix viewRotationY = Quaternion::getRotation(Vector(0, cameraSimpleRotation.y), std::abs(cameraSimpleRotation.y)).getMatrix();
+	Matrix viewRotation = cameraDirection.getMatrix() * viewRotationY * viewRotationX;
+	Matrix view = viewTranslation * viewRotation;
 
 	Matrix model = Matrix::translation(0, 0, 0);
 
@@ -148,8 +166,6 @@ void App::run(std::vector<std::string> const & args)
 {
 	glfwSetWindowUserPointer(window, this);
 	glfwSetScrollCallback(window, scrollCallback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 	glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
 
 	model.load(args[1]);
@@ -189,6 +205,6 @@ void App::run(std::vector<std::string> const & args)
 	}
 }
 
-App::App(GLFWwindow *window) : window(window), cameraRotation(0, 0, 0), cameraZoom(-5), viewType(ViewType::Colors) {}
+App::App(GLFWwindow *window) : window(window), cameraZoom(-5), viewType(ViewType::Colors) {}
 
 App::~App() {}

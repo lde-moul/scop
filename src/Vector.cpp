@@ -32,7 +32,14 @@ float Vector::getLength() const
 Vector Vector::normalize() const
 {
 	float length = getLength();
-	return Vector(x / length, y / length, z / length, w);
+	if (length == 0.f)
+	{
+		return *this;
+	}
+	else
+	{
+		return Vector(x / length, y / length, z / length, w);
+	}
 }
 
 Vector Vector::operator+(Vector const & other) const
