@@ -94,7 +94,6 @@ void App::handleScrolling(double, double y)
 {
 	cameraZoom += y / 4 * getSpeedFactor();
 	cameraZoom = std::min(std::max(cameraZoom, -100.f), 10.f);
-	std::cout << cameraZoom << std::endl;
 }
 
 float App::getSpeedFactor()
