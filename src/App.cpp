@@ -27,6 +27,14 @@ void App::loadShaders()
 	program.link();
 }
 
+void App::handleTick(double timeStep)
+{
+	handleInputs(timeStep);
+
+	if (autoRotating)
+		cameraDirection = Quaternion::getRotation(Vector(0, 1, 0), 2 * Util::PI / 10 * timeStep) * cameraDirection;
+}
+
 void App::handleInputs(double timeStep)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
@@ -96,10 +104,21 @@ void App::handleScrolling(double, double y)
 	cameraZoom = std::min(std::max(cameraZoom, -100.f), 10.f);
 }
 
+void App::handleKey(int key, int, int action, int)
+{
+	if (key == GLFW_KEY_R && action == GLFW_PRESS)
+		autoRotating = !autoRotating;
+}
+
 float App::getSpeedFactor()
 {
 	bool shiftPressed = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT));
 	return shiftPressed ? 0.25f : 1.f;
+}
+
+static void keyCallback(GLFWwindow *window, int key, int code, int action, int modifier)
+{
+	static_cast<App*>(glfwGetWindowUserPointer(window))->handleKey(key, code, action, modifier);
 }
 
 static void scrollCallback(GLFWwindow *window, double x, double y)
@@ -148,6 +167,7 @@ void App::drawModel(size_t numElements)
 void App::run(std::vector<std::string> const & args)
 {
 	glfwSetWindowUserPointer(window, this);
+	glfwSetKeyCallback(window, keyCallback);
 	glfwSetScrollCallback(window, scrollCallback);
 	glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
 
@@ -175,7 +195,7 @@ void App::run(std::vector<std::string> const & args)
 	while (!glfwWindowShouldClose(window))
 	{
 		double now = glfwGetTime();
-		handleInputs(now - lastFrame);
+		handleTick(now - lastFrame);
 		lastFrame = now;
 
 		glClearColor(0.2f, 0.2f, 0.25f, 1.0f);
@@ -188,6 +208,6 @@ void App::run(std::vector<std::string> const & args)
 	}
 }
 
-App::App(GLFWwindow *window) : window(window), cameraZoom(-5), viewType(ViewType::Colors) {}
+App::App(GLFWwindow *window) : window(window), cameraZoom(-5), viewType(ViewType::Colors), autoRotating(false) {}
 
 App::~App() {}

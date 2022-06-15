@@ -35,6 +35,7 @@ private:
 	Vector cameraSimpleRotation;
 	float cameraZoom;
 	ViewType viewType;
+	bool autoRotating;
 
 	double oldCursorX;
 	double oldCursorY;
@@ -49,6 +50,7 @@ private:
 	GLTexture texture;
 
 	void loadShaders();
+	void handleTick(double timeStep);
 	void handleInputs(double timeStep);
 	void handleCameraRotation(double timeStep, double cursorMoveX, double cursorMoveY);
 	float getSpeedFactor();
@@ -56,6 +58,7 @@ private:
 
 public:
 	void run(std::vector<std::string> const & args);
+	void handleKey(int key, int code, int action, int modifier);
 	void handleScrolling(double x, double y);
 
 	App(GLFWwindow *window);
