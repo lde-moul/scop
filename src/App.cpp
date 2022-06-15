@@ -63,6 +63,7 @@ void App::handleCameraRotation(double timeStep, double cursorMoveX, double curso
 	{
 		cameraDirection = Quaternion();
 		cameraSimpleRotation = Vector();
+		cameraZoom = -5;
 	}
 
 	Vector keyboardAxis;
