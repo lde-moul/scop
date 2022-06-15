@@ -48,12 +48,18 @@ private:
 	GLBuffer vbo;
 	GLBuffer ebo;
 	GLTexture texture;
+	std::vector<float> vertices;
+	std::vector<unsigned int> vertexIndices;
 
-	void loadShaders();
 	void handleTick(double timeStep);
 	void handleCameraRotation(double timeStep);
 	float getSpeedFactor();
 	void drawModel(size_t numElements);
+	void loop();
+	void initialiseWindow();
+	void loadAssets(std::string const & modelFileName);
+	void initialiseRendering();
+	void loadShaders();
 
 public:
 	void run(std::vector<std::string> const & args);

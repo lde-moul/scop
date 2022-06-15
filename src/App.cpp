@@ -6,27 +6,6 @@
 
 #include <iostream> // !!!
 
-void App::loadShaders()
-{
-	program.reset();
-
-	vertexShader.load(GL_VERTEX_SHADER, "resources/Shader.vs");
-	program.attachShader(vertexShader);
-
-	std::string fileName;
-	switch (viewType)
-	{
-		case ViewType::Uniform  : fileName = "Uniform.fs"; break;
-		case ViewType::Colors   : fileName = "Colors.fs" ; break;
-		case ViewType::Texture  : fileName = "Texture.fs"; break;
-		case ViewType::Wireframe: fileName = "Colors.fs" ; break;
-	}
-	fragmentShader.load(GL_FRAGMENT_SHADER, "resources/" + fileName);
-	program.attachShader(fragmentShader);
-
-	program.link();
-}
-
 void App::handleTick(double timeStep)
 {
 	handleCameraRotation(timeStep);
@@ -81,6 +60,11 @@ void App::handleScrolling(double, double y)
 	cameraZoom = std::min(std::max(cameraZoom, -100.f), 10.f);
 }
 
+static void scrollCallback(GLFWwindow *window, double x, double y)
+{
+	static_cast<App*>(glfwGetWindowUserPointer(window))->handleScrolling(x, y);
+}
+
 void App::handleKey(int key, int, int action, int)
 {
 	if (action != GLFW_PRESS)
@@ -115,20 +99,15 @@ void App::handleKey(int key, int, int action, int)
 	}
 }
 
-float App::getSpeedFactor()
-{
-	bool shiftPressed = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT));
-	return shiftPressed ? 0.25f : 1.f;
-}
-
 static void keyCallback(GLFWwindow *window, int key, int code, int action, int modifier)
 {
 	static_cast<App*>(glfwGetWindowUserPointer(window))->handleKey(key, code, action, modifier);
 }
 
-static void scrollCallback(GLFWwindow *window, double x, double y)
+float App::getSpeedFactor()
 {
-	static_cast<App*>(glfwGetWindowUserPointer(window))->handleScrolling(x, y);
+	bool shiftPressed = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT));
+	return shiftPressed ? 0.25f : 1.f;
 }
 
 void App::drawModel(size_t numElements)
@@ -169,34 +148,10 @@ void App::drawModel(size_t numElements)
 	glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_INT, 0);
 }
 
-void App::run(std::vector<std::string> const & args)
+void App::loop()
 {
-	glfwSetWindowUserPointer(window, this);
-	glfwSetKeyCallback(window, keyCallback);
-	glfwSetScrollCallback(window, scrollCallback);
-	glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
-
-	model.load(args[1]);
-	tga.load("resources/norminet.tga");
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_GREATER);
-	glClearDepthf(0.f);
-
-	loadShaders();
-
-	vao.addAttribute(3, GL_FLOAT, GL_FALSE, 0);
-	vao.addAttribute(2, GL_FLOAT, GL_FALSE, 3 * sizeof(float));
-
-	std::vector<float> vertices = model.getVerticesAsArray();
-	vbo.set(GL_ARRAY_BUFFER, vertices.data(), vertices.size() * sizeof(float), 5 * sizeof(float));
-
-	std::vector<unsigned int> vertexIndices = model.getFacesAsArray();
-	ebo.set(GL_ELEMENT_ARRAY_BUFFER, vertexIndices.data(), vertexIndices.size() * sizeof(unsigned int), sizeof(unsigned int));
-
-	texture.set(tga);
-
 	double lastFrame = glfwGetTime();
+
 	while (!glfwWindowShouldClose(window))
 	{
 		double now = glfwGetTime();
@@ -211,6 +166,69 @@ void App::run(std::vector<std::string> const & args)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+}
+
+void App::initialiseWindow()
+{
+	glfwSetWindowUserPointer(window, this);
+	glfwSetKeyCallback(window, keyCallback);
+	glfwSetScrollCallback(window, scrollCallback);
+	glfwGetCursorPos(window, &oldCursorX, &oldCursorY);
+}
+
+void App::loadAssets(std::string const & modelFileName)
+{
+	model.load(modelFileName);
+	tga.load("resources/norminet.tga");
+}
+
+void App::initialiseRendering()
+{
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_GREATER);
+	glClearDepthf(0.f);
+
+	loadShaders();
+
+	vao.addAttribute(3, GL_FLOAT, GL_FALSE, 0);
+	vao.addAttribute(2, GL_FLOAT, GL_FALSE, 3 * sizeof(float));
+
+	vertices = model.getVerticesAsArray();
+	vbo.set(GL_ARRAY_BUFFER, vertices.data(), vertices.size() * sizeof(float), 5 * sizeof(float));
+
+	vertexIndices = model.getFacesAsArray();
+	ebo.set(GL_ELEMENT_ARRAY_BUFFER, vertexIndices.data(), vertexIndices.size() * sizeof(unsigned int), sizeof(unsigned int));
+
+	texture.set(tga);
+}
+
+void App::loadShaders()
+{
+	program.reset();
+
+	vertexShader.load(GL_VERTEX_SHADER, "resources/Shader.vs");
+	program.attachShader(vertexShader);
+
+	std::string fileName;
+	switch (viewType)
+	{
+		case ViewType::Uniform  : fileName = "Uniform.fs"; break;
+		case ViewType::Colors   : fileName = "Colors.fs" ; break;
+		case ViewType::Texture  : fileName = "Texture.fs"; break;
+		case ViewType::Wireframe: fileName = "Colors.fs" ; break;
+	}
+	fragmentShader.load(GL_FRAGMENT_SHADER, "resources/" + fileName);
+	program.attachShader(fragmentShader);
+
+	program.link();
+}
+
+void App::run(std::vector<std::string> const & args)
+{
+	initialiseWindow();
+	loadAssets(args[1]);
+	initialiseRendering();
+	loop();
 }
 
 App::App(GLFWwindow *window) : window(window), cameraZoom(-5), viewType(ViewType::Colors), autoRotating(false) {}
