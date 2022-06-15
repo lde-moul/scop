@@ -70,13 +70,9 @@ std::string Model::removeComment(std::string const & line)
 {
 	std::vector<std::string> && parts = Util::splitString(line, '#');
 	if (parts.size() > 0)
-	{
 		return parts[0];
-	}
 	else
-	{
 		return "";
-	}
 }
 
 void Model::loadInstruction(std::ifstream & file, std::vector<std::vector<std::string>> & instructions)
@@ -85,13 +81,9 @@ void Model::loadInstruction(std::ifstream & file, std::vector<std::vector<std::s
 	std::getline(file, line);
 
 	if (file.eof())
-	{
 		return;
-	}
 	else if (file.fail())
-	{
 		throw Model::LoadError("cannot read file");
-	}
 
 	std::string && uncommentedLine = removeComment(line);
 	std::vector<std::string> && params = Util::splitString(std::move(uncommentedLine), ' ');
@@ -102,9 +94,7 @@ std::vector<std::vector<std::string>> Model::loadInstructions(std::string const 
 {
 	std::ifstream file(fileName);
 	if (file.fail())
-	{
 		throw Model::LoadError("cannot open file");
-	}
 
 	std::vector<std::vector<std::string>> instructions;
 	while (!file.eof())
@@ -120,17 +110,11 @@ void Model::assertParameterQuantity(std::vector<std::string> const & instruction
 	size_t numParams = instruction.size() - 1;
 
 	if (min == max && numParams != min)
-	{
 		throw Model::LoadError("expected " + std::to_string(min) + " parameters but got " + std::to_string(numParams));
-	}
 	else if (numParams < min)
-	{
 		throw Model::LoadError("expected at least " + std::to_string(min) + " parameters but got " + std::to_string(numParams));
-	}
 	else if (numParams > max)
-	{
 		throw Model::LoadError("expected at most " + std::to_string(max) + " parameters but got " + std::to_string(numParams));
-	}
 }
 
 void Model::parseVertex(std::vector<std::string> const & instruction)
@@ -189,17 +173,11 @@ void Model::load(std::string fileName)
 	for (auto const & instruction : instructions)
 	{
 		if (instruction.size() == 0 || instruction[0] == "o")
-		{
 			continue;
-		}
 		else if (instruction[0] == "v")
-		{
 			parseVertex(instruction);
-		}
 		else if (instruction[0] == "f")
-		{
 			parseFace(instruction);
-		}
 	}
 
 	recenter();

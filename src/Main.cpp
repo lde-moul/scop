@@ -13,17 +13,13 @@ static GLFWwindow *createWindow()
 
 	GLFWwindow *window = glfwCreateWindow(1024, 1024, "scop", nullptr, nullptr);
 	if (window == nullptr)
-	{
 		throw GLError("failed to create window");
-	}
 
 	glfwMakeContextCurrent(window);
 
 	GLenum error = glewInit();
 	if (error != GLEW_OK)
-	{
 		throw GLError(reinterpret_cast<char const *>(glewGetErrorString(error)));
-	}
 
 	glViewport(0, 0, 1024, 1024);
 

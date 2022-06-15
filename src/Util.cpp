@@ -18,14 +18,10 @@ std::vector<std::string> Util::splitString(std::string const & s, char delimiter
 		std::getline(stream, word, delimiter);
 
 		if (stream.eof())
-		{
 			break;
-		}
 
 		if (!word.empty())
-		{
 			words.push_back(std::move(word));
-		}
 	}
 
 	return words;

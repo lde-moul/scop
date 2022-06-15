@@ -26,9 +26,7 @@ void GLProgram::reset()
 
 	id = glCreateProgram();
 	if (id == 0)
-	{
 		throw GLError("failed to create program");
-	}
 }
 
 void GLProgram::use()
@@ -46,9 +44,7 @@ GLProgram::GLProgram()
 {
 	id = glCreateProgram();
 	if (id == 0)
-	{
 		throw GLError("failed to create program");
-	}
 }
 
 GLProgram::~GLProgram()

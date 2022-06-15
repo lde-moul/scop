@@ -53,21 +53,15 @@ void TGA::load(std::string const & fileName)
 		file.open(fileName, std::ios::binary);
 		file.exceptions(std::ios::failbit | std::ios::eofbit);
 		if (file.fail())
-		{
 			throw TGA::LoadError("cannot open file");
-		}
 
 		int8_t idLength = readInt8();
 
 		if (readInt8() != 0)
-		{
 			throw TGA::LoadError("color maps are unsupported");
-		}
 
 		if (readInt8() != 2)
-		{
 			throw TGA::LoadError("unsupported image type");
-		}
 
 		readInt16();
 		readInt16();
@@ -80,13 +74,9 @@ void TGA::load(std::string const & fileName)
 		height = readInt16();
 
 		if (readInt8() != 24)
-		{
 			throw TGA::LoadError("unsupported pixel depth");
-		}
 		if (readInt8() != 32)
-		{
 			throw TGA::LoadError("unsupported pixel format");
-		}
 
 		file.read(nullptr, idLength);
 

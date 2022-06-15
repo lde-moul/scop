@@ -28,27 +28,17 @@ void App::loadShaders()
 void App::handleInputs(double timeStep)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
-	{
 		glfwSetWindowShouldClose(window, true);
-	}
 
 	ViewType newViewType = viewType;
 	if (glfwGetKey(window, GLFW_KEY_1))
-	{
 		newViewType = ViewType::Uniform;
-	}
 	if (glfwGetKey(window, GLFW_KEY_2))
-	{
 		newViewType = ViewType::Colors;
-	}
 	if (glfwGetKey(window, GLFW_KEY_3))
-	{
 		newViewType = ViewType::Texture;
-	}
 	if (glfwGetKey(window, GLFW_KEY_4))
-	{
 		newViewType = ViewType::Wireframe;
-	}
 	if (newViewType != viewType)
 	{
 		viewType = newViewType;
@@ -77,21 +67,13 @@ void App::handleCameraRotation(double timeStep, double cursorMoveX, double curso
 
 	Vector keyboardAxis;
 	if (glfwGetKey(window, GLFW_KEY_A) || glfwGetKey(window, GLFW_KEY_LEFT))
-	{
 		keyboardAxis = keyboardAxis + Vector(0, -1);
-	}
 	if (glfwGetKey(window, GLFW_KEY_D) || glfwGetKey(window, GLFW_KEY_RIGHT))
-	{
 		keyboardAxis = keyboardAxis + Vector(0, 1);
-	}
 	if (glfwGetKey(window, GLFW_KEY_W) || glfwGetKey(window, GLFW_KEY_UP))
-	{
 		keyboardAxis = keyboardAxis + Vector(-1, 0);
-	}
 	if (glfwGetKey(window, GLFW_KEY_S) || glfwGetKey(window, GLFW_KEY_DOWN))
-	{
 		keyboardAxis = keyboardAxis + Vector(1, 0);
-	}
 	keyboardAxis = keyboardAxis.normalize();
 
 	Vector mouseAxis = Vector(cursorMoveY, cursorMoveX) / 32;
@@ -99,13 +81,9 @@ void App::handleCameraRotation(double timeStep, double cursorMoveX, double curso
 	cameraSimpleRotation = cameraSimpleRotation + keyboardAxis / 2 * speed;
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
-	{
 		cameraSimpleRotation = cameraSimpleRotation + mouseAxis * speed;
-	}
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))
-	{
 		cameraDirection = Quaternion::getRotation(mouseAxis, speed * mouseAxis.getLength()) * cameraDirection;
-	}
 }
 
 void App::handleScrolling(double, double y)

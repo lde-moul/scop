@@ -27,9 +27,7 @@ void GLBuffer::set(GLenum type, void const *data, GLsizeiptr size, GLsizei strid
 
 	glNamedBufferData(id, size, data, GL_STATIC_DRAW);
 	if (glGetError())
-	{
 		throw GLError("failed to set buffer data");
-	}
 }
 
 GLBuffer::GLBuffer() : id(0) {}

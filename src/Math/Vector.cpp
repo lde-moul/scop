@@ -13,13 +13,9 @@ Vector Vector::normalize() const
 {
 	float length = getLength();
 	if (length == 0.f)
-	{
 		return *this;
-	}
 	else
-	{
 		return Vector(x / length, y / length, z / length, w);
-	}
 }
 
 Vector Vector::operator+(Vector const & other) const
