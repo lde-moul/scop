@@ -110,7 +110,21 @@ float App::getSpeedFactor()
 	return shiftPressed ? 0.25f : 1.f;
 }
 
-void App::drawModel(size_t numElements)
+void App::drawBackground()
+{
+	backgroundProgram.use();
+
+	backgroundVAO.bind();
+	backgroundVAO.bindVBO(backgroundVBO);
+	backgroundVAO.bindEBO(backgroundEBO);
+
+	glDisable(GL_DEPTH_TEST);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+Matrix App::createModelMatrix()
 {
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
@@ -126,12 +140,19 @@ void App::drawModel(size_t numElements)
 
 	Matrix model = Matrix::translation(0, 0, 0);
 
+	return projection * view * model;
+}
+
+void App::drawModel()
+{
 	program.use();
-	program.setUniform("matrix", projection * view * model);
+	program.setUniform("matrix", createModelMatrix());
 
 	vao.bind();
 	vao.bindVBO(vbo);
 	vao.bindEBO(ebo);
+
+	glEnable(GL_DEPTH_TEST);
 
 	if (viewType == ViewType::Wireframe)
 	{
@@ -145,7 +166,7 @@ void App::drawModel(size_t numElements)
 
 	texture.bind();
 
-	glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, vertexIndices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void App::loop()
@@ -161,7 +182,8 @@ void App::loop()
 		glClearColor(0.2f, 0.2f, 0.25f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		drawModel(vertexIndices.size());
+		drawBackground();
+		drawModel();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -182,14 +204,27 @@ void App::loadAssets(std::string const & modelFileName)
 	tga.load("resources/norminet.tga");
 }
 
-void App::initialiseRendering()
+void App::initialiseBackgroundRendering()
 {
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_GREATER);
-	glClearDepthf(0.f);
+	backgroundVAO.addAttribute(3, GL_FLOAT, GL_FALSE, 0);
 
-	loadShaders();
+	float backgroundVertices[] = {
+		-1, -1, 0,
+		-1,  1, 0,
+		 1,  1, 0,
+		 1, -1, 0,
+	};
+	backgroundVBO.set(GL_ARRAY_BUFFER, backgroundVertices, sizeof(backgroundVertices), 3 * sizeof(float));
 
+	unsigned int backgroundVertexIndices[] = {
+		0, 1, 2,
+		2, 3, 0,
+	};
+	backgroundEBO.set(GL_ELEMENT_ARRAY_BUFFER, backgroundVertexIndices, 6 * sizeof(unsigned int), sizeof(unsigned int));
+}
+
+void App::initialiseModelRendering()
+{
 	vao.addAttribute(3, GL_FLOAT, GL_FALSE, 0);
 	vao.addAttribute(2, GL_FLOAT, GL_FALSE, 3 * sizeof(float));
 
@@ -200,6 +235,17 @@ void App::initialiseRendering()
 	ebo.set(GL_ELEMENT_ARRAY_BUFFER, vertexIndices.data(), vertexIndices.size() * sizeof(unsigned int), sizeof(unsigned int));
 
 	texture.set(tga);
+}
+
+void App::initialiseRendering()
+{
+	glDepthFunc(GL_GREATER);
+	glClearDepthf(0.f);
+
+	loadShaders();
+
+	initialiseBackgroundRendering();
+	initialiseModelRendering();
 }
 
 void App::loadShaders()
@@ -221,6 +267,16 @@ void App::loadShaders()
 	program.attachShader(fragmentShader);
 
 	program.link();
+
+	backgroundProgram.reset();
+
+	backgroundVertexShader.load(GL_VERTEX_SHADER, "resources/Checker.vs");
+	backgroundProgram.attachShader(backgroundVertexShader);
+
+	backgroundFragmentShader.load(GL_FRAGMENT_SHADER, "resources/Checker.fs");
+	backgroundProgram.attachShader(backgroundFragmentShader);
+
+	backgroundProgram.link();
 }
 
 void App::run(std::vector<std::string> const & args)
