@@ -16,7 +16,16 @@ public:
 
 	Matrix getMatrix() const;
 	Quaternion normalize() const;
+	Quaternion conjugate() const;
+	Quaternion invert() const;
+	float dot(Quaternion const & other);
+	Quaternion slerp(Quaternion const & other, float amount);
+	Quaternion slerp(float amount);
+	float getAngle() const;
+	Quaternion operator+(Quaternion const & other) const;
+	Quaternion operator-(Quaternion const & other) const;
 	Quaternion operator*(Quaternion const & other) const;
+	Quaternion operator*(float other) const;
 	void dump();
 
 	Quaternion(float x, float y, float z, float w);

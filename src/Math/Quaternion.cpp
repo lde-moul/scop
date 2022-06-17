@@ -58,6 +58,59 @@ Quaternion Quaternion::normalize() const
 	}
 }
 
+Quaternion Quaternion::conjugate() const
+{
+	return Quaternion(-x, -y, -z, w);
+}
+
+Quaternion Quaternion::invert() const
+{
+	float squaredLength = x * x + y * y + z * z + w * w;
+	return conjugate() * (1.f / squaredLength);
+}
+
+float Quaternion::dot(Quaternion const & other)
+{
+	return x * other.x + y * other.y + z * other.z + w * other.w;
+}
+
+Quaternion Quaternion::slerp(Quaternion const & other, float amount)
+{
+	float theta = std::acos(dot(other));
+	float sinTheta = std::sin(theta);
+
+	if (sinTheta == 0.f)
+	{
+		return (*this + (other - *this) * amount).normalize();
+	}
+	else
+	{
+		float blendedA = std::sin((1.f - amount) * theta) / sinTheta;
+		float blendedB = std::sin(amount * theta) / sinTheta;
+		return (*this * blendedA + other * blendedB).normalize();
+	}
+}
+
+Quaternion Quaternion::slerp(float amount)
+{
+	return Quaternion().slerp(*this, amount);
+}
+
+float Quaternion::getAngle() const
+{
+	return 2 * std::atan2(Vector(x, y, z).getLength(), w);
+}
+
+Quaternion Quaternion::operator+(Quaternion const & other) const
+{
+	return Quaternion(x + other.x, y + other.y, z + other.z, w + other.w);
+}
+
+Quaternion Quaternion::operator-(Quaternion const & other) const
+{
+	return Quaternion(x - other.x, y - other.y, z - other.z, w - other.w);
+}
+
 Quaternion Quaternion::operator*(Quaternion const & other) const
 {
 	return Quaternion(
@@ -66,6 +119,11 @@ Quaternion Quaternion::operator*(Quaternion const & other) const
 		w * other.z + x * other.y - y * other.x + z * other.w,
 		w * other.w - x * other.x - y * other.y - z * other.z
 	).normalize();
+}
+
+Quaternion Quaternion::operator*(float other) const
+{
+	return Quaternion(x * other, y * other, z * other, w * other);
 }
 
 void Quaternion::dump()
