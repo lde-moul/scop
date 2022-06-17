@@ -28,7 +28,7 @@ void GLShader::load(GLenum type, std::string const & fileName)
 	if (id == 0)
 		throw GLError("failed to create shader");
 
-	char const * rawCode = code.data();;
+	char const * rawCode = code.data();
 	glShaderSource(id, 1, &rawCode, nullptr);
 
 	glCompileShader(id);
