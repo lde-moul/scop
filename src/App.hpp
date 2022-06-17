@@ -32,7 +32,10 @@ private:
 	TGA tga;
 
 	Quaternion cameraDirection;
-	Vector cameraSimpleRotation;
+	Vector cameraRotationAxis;
+	float cameraRotationSpeed;
+	Vector simpleCameraOrientation;
+	Vector simpleCameraRotation;
 	float cameraZoom;
 	ViewType viewType;
 	bool autoRotating;
@@ -60,7 +63,9 @@ private:
 	GLBuffer backgroundEBO;
 
 	void handleTick(double timeStep);
+	void handleCameraControls(double timeStep, double cursorMoveX, double cursorMoveY);
 	void handleCameraRotation(double timeStep);
+	Vector getKeyboardAxis();
 	float getSpeedFactor();
 	void drawBackground();
 	Matrix createModelMatrix();

@@ -8,11 +8,6 @@
 
 void App::handleTick(double timeStep)
 {
-	handleCameraRotation(timeStep);
-}
-
-void App::handleCameraRotation(double timeStep)
-{
 	double cursorX, cursorY;
 	glfwGetCursorPos(window, &cursorX, &cursorY);
 	double cursorMoveX = cursorX - oldCursorX;
@@ -20,38 +15,47 @@ void App::handleCameraRotation(double timeStep)
 	oldCursorX = cursorX;
 	oldCursorY = cursorY;
 
-	float speed = 2 * Util::PI * getSpeedFactor() * timeStep;
+	handleCameraControls(timeStep, cursorMoveX, cursorMoveY);
+	handleCameraRotation(timeStep);
 
-	if (glfwGetKey(window, GLFW_KEY_SPACE))
-	{
-		cameraDirection = Quaternion();
-		cameraSimpleRotation = Vector();
-		cameraZoom = -5;
-	}
+	simpleCameraOrientation = Vector(
+		std::fmod(simpleCameraOrientation.x, Util::PI2),
+		std::fmod(simpleCameraOrientation.y, Util::PI2)
+	);
+}
 
-	Vector keyboardAxis;
-	if (glfwGetKey(window, GLFW_KEY_A) || glfwGetKey(window, GLFW_KEY_LEFT))
-		keyboardAxis = keyboardAxis + Vector(0, -1);
-	if (glfwGetKey(window, GLFW_KEY_D) || glfwGetKey(window, GLFW_KEY_RIGHT))
-		keyboardAxis = keyboardAxis + Vector(0, 1);
-	if (glfwGetKey(window, GLFW_KEY_W) || glfwGetKey(window, GLFW_KEY_UP))
-		keyboardAxis = keyboardAxis + Vector(-1, 0);
-	if (glfwGetKey(window, GLFW_KEY_S) || glfwGetKey(window, GLFW_KEY_DOWN))
-		keyboardAxis = keyboardAxis + Vector(1, 0);
-	keyboardAxis = keyboardAxis.normalize();
+void App::handleCameraControls(double timeStep, double cursorMoveX, double cursorMoveY)
+{
+	float speed = Util::PI2 * getSpeedFactor();
 
-	Vector mouseAxis = Vector(cursorMoveY, cursorMoveX) / 32;
-
-	cameraSimpleRotation = cameraSimpleRotation + keyboardAxis / 2 * speed;
-	cameraSimpleRotation = Vector(std::fmod(cameraSimpleRotation.x, 2 * Util::PI), std::fmod(cameraSimpleRotation.y, 2 * Util::PI));
+	Vector mouseAxis = Vector(cursorMoveY, cursorMoveX) / 1800;
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
-		cameraSimpleRotation = cameraSimpleRotation + mouseAxis * speed;
+	{
+		simpleCameraRotation = mouseAxis * speed / timeStep;
+	}
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))
-		cameraDirection = Quaternion::getRotation(mouseAxis, speed * mouseAxis.getLength()) * cameraDirection;
+	{
+		cameraRotationAxis = mouseAxis.normalize();
+		cameraRotationSpeed = speed * mouseAxis.getLength() / timeStep;
+	}
+
+	simpleCameraOrientation = simpleCameraOrientation + getKeyboardAxis() / 2 * speed * timeStep;
+}
+
+void App::handleCameraRotation(double timeStep)
+{
+	float deceleration = Util::PI2 * 4 * timeStep;
+
+	cameraDirection = Quaternion::getRotation(cameraRotationAxis, cameraRotationSpeed * timeStep) * cameraDirection;
+	cameraRotationSpeed = std::max(cameraRotationSpeed - deceleration, 0.f);
+
+	simpleCameraOrientation = simpleCameraOrientation + simpleCameraRotation * timeStep;
+	float newSimpleSpeed = std::max(simpleCameraRotation.getLength() - deceleration, 0.f);
+	simpleCameraRotation = simpleCameraRotation.normalize() * newSimpleSpeed;
 
 	if (autoRotating)
-		cameraDirection = Quaternion::getRotation(Vector(0, 1, 0), 2 * Util::PI / 10 * timeStep) * cameraDirection;
+		cameraDirection = Quaternion::getRotation(Vector(0, 1, 0), Util::PI2 / 10 * timeStep) * cameraDirection;
 }
 
 void App::handleScrolling(double, double y)
@@ -93,6 +97,18 @@ void App::handleKey(int key, int, int action, int)
 		loadShaders();
 		break;
 
+	case GLFW_KEY_SPACE:
+		cameraDirection = Quaternion();
+		cameraRotationAxis = Vector();
+		cameraRotationSpeed = 0;
+
+		simpleCameraOrientation = Vector();
+		simpleCameraRotation = Vector();
+
+		cameraZoom = -5;
+		autoRotating = false;
+		break;
+
 	case GLFW_KEY_R:
 		autoRotating = !autoRotating;
 		break;
@@ -102,6 +118,22 @@ void App::handleKey(int key, int, int action, int)
 static void keyCallback(GLFWwindow *window, int key, int code, int action, int modifier)
 {
 	static_cast<App*>(glfwGetWindowUserPointer(window))->handleKey(key, code, action, modifier);
+}
+
+Vector App::getKeyboardAxis()
+{
+	Vector axis;
+
+	if (glfwGetKey(window, GLFW_KEY_A) || glfwGetKey(window, GLFW_KEY_LEFT))
+		axis = axis + Vector(0, -1);
+	if (glfwGetKey(window, GLFW_KEY_D) || glfwGetKey(window, GLFW_KEY_RIGHT))
+		axis = axis + Vector(0, 1);
+	if (glfwGetKey(window, GLFW_KEY_W) || glfwGetKey(window, GLFW_KEY_UP))
+		axis = axis + Vector(-1, 0);
+	if (glfwGetKey(window, GLFW_KEY_S) || glfwGetKey(window, GLFW_KEY_DOWN))
+		axis = axis + Vector(1, 0);
+
+	return axis.normalize();
 }
 
 float App::getSpeedFactor()
@@ -133,8 +165,8 @@ Matrix App::createModelMatrix()
 	Matrix projection = Matrix::perspective(Util::degreesToRadians(90), aspectRatio, 0.1f, 100.f);
 
 	Matrix viewTranslation = Matrix::translation(0, 0, cameraZoom);
-	Matrix viewRotationX = Quaternion::getRotation(Vector(cameraSimpleRotation.x, 0), std::abs(cameraSimpleRotation.x)).getMatrix();
-	Matrix viewRotationY = Quaternion::getRotation(Vector(0, cameraSimpleRotation.y), std::abs(cameraSimpleRotation.y)).getMatrix();
+	Matrix viewRotationX = Quaternion::getRotation(Vector(simpleCameraOrientation.x, 0), std::abs(simpleCameraOrientation.x)).getMatrix();
+	Matrix viewRotationY = Quaternion::getRotation(Vector(0, simpleCameraOrientation.y), std::abs(simpleCameraOrientation.y)).getMatrix();
 	Matrix viewRotation = cameraDirection.getMatrix() * viewRotationY * viewRotationX;
 	Matrix view = viewTranslation * viewRotation;
 
