@@ -21,7 +21,7 @@ class App
 private:
 	enum class ViewType
 	{
-		Uniform,
+		Uniform = 0,
 		Colors,
 		Texture,
 		Wireframe
@@ -37,8 +37,10 @@ private:
 	Vector simpleCameraOrientation;
 	Vector simpleCameraRotation;
 	float cameraZoom;
-	ViewType viewType;
 	bool autoRotating;
+
+	ViewType viewType;
+	float viewTypeTransition[4];
 
 	double oldCursorX;
 	double oldCursorY;

@@ -20,6 +20,15 @@ void App::handleTick(double timeStep)
 		std::fmod(simpleCameraOrientation.x, Util::PI2),
 		std::fmod(simpleCameraOrientation.y, Util::PI2)
 	);
+
+	float transitionSpeed = 1.f / 3 * timeStep;
+	for (int i = 0; i < 4; i++)
+	{
+		if (i == static_cast<int>(viewType))
+			viewTypeTransition[i] = std::min(viewTypeTransition[i] + transitionSpeed, 1.f);
+		else
+			viewTypeTransition[i] = std::max(viewTypeTransition[i] - transitionSpeed, 0.f);
+	}
 }
 
 void App::handleCameraControls(double timeStep, double cursorMoveX, double cursorMoveY)
@@ -80,19 +89,15 @@ void App::handleKey(int key, int, int action, int)
 
 	case GLFW_KEY_1:
 		viewType = ViewType::Uniform;
-		loadShaders();
 		break;
 	case GLFW_KEY_2:
 		viewType = ViewType::Colors;
-		loadShaders();
 		break;
 	case GLFW_KEY_3:
 		viewType = ViewType::Texture;
-		loadShaders();
 		break;
 	case GLFW_KEY_4:
 		viewType = ViewType::Wireframe;
-		loadShaders();
 		break;
 
 	case GLFW_KEY_SPACE:
@@ -181,6 +186,7 @@ void App::drawModel()
 {
 	program.use();
 	program.setUniform("matrix", createModelMatrix());
+	program.setUniform("viewTypeTransition", viewTypeTransition, 4);
 
 	vao.bind();
 	vao.bindVBO(vbo);
@@ -188,10 +194,10 @@ void App::drawModel()
 
 	glEnable(GL_DEPTH_TEST);
 
-	if (viewType == ViewType::Wireframe)
+	if (viewTypeTransition[3] > 0.f)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glLineWidth(1.f);
+		glLineWidth(10 - viewTypeTransition[3] * (10 - 1));
 	}
 	else
 	{
@@ -299,14 +305,7 @@ void App::loadShaders()
 	program.attachShader(vertexShader);
 
 	std::string fileName;
-	switch (viewType)
-	{
-		case ViewType::Uniform  : fileName = "Uniform.fs"; break;
-		case ViewType::Colors   : fileName = "Colors.fs" ; break;
-		case ViewType::Texture  : fileName = "Texture.fs"; break;
-		case ViewType::Wireframe: fileName = "Colors.fs" ; break;
-	}
-	fragmentShader.load(GL_FRAGMENT_SHADER, "resources/" + fileName);
+	fragmentShader.load(GL_FRAGMENT_SHADER, "resources/Shader.fs");
 	program.attachShader(fragmentShader);
 
 	program.link();
@@ -330,6 +329,13 @@ void App::run(std::vector<std::string> const & args)
 	loop();
 }
 
-App::App(GLFWwindow *window) : window(window), cameraZoom(-5), viewType(ViewType::Colors), autoRotating(false) {}
+App::App(GLFWwindow *window) :
+	window(window),
+	cameraZoom(-5),
+	autoRotating(false),
+	viewType(ViewType::Colors),
+	viewTypeTransition { 0, 1, 0, 0 }
+{
+}
 
 App::~App() {}

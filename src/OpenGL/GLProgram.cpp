@@ -38,13 +38,22 @@ void GLProgram::use()
 		throw GLError("failed to use program");
 }
 
-void GLProgram::setUniform(std::string const & name, Matrix const & matrix)
+GLint GLProgram::getUniformLocation(std::string const & name)
 {
 	GLint location = glGetUniformLocation(id, name.c_str());
-	if (glGetError())
+	if (location == -1)
 		throw GLError("failed to get uniform location");
+	return location;
+}
 
-	glProgramUniformMatrix4fv(id, location, 1, GL_TRUE, matrix.getArray());
+void GLProgram::setUniform(std::string const & name, float const * array, size_t size)
+{
+	glProgramUniform1fv(id, getUniformLocation(name), size, array);
+}
+
+void GLProgram::setUniform(std::string const & name, Matrix const & matrix)
+{
+	glProgramUniformMatrix4fv(id, getUniformLocation(name), 1, GL_TRUE, matrix.getArray());
 }
 
 GLProgram::GLProgram()

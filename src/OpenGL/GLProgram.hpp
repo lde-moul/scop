@@ -17,6 +17,8 @@ public:
 	void link();
 	void use();
 	void reset();
+	GLint getUniformLocation(std::string const & name);
+	void setUniform(std::string const & name, float const * array, size_t size);
 	void setUniform(std::string const & name, Matrix const & matrix);
 
 	GLProgram();
