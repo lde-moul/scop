@@ -15,7 +15,6 @@ public:
 	Vector operator-(Vector const & other) const;
 	Vector operator*(float other) const;
 	Vector operator/(float other) const;
-	void dump();
 
 	Vector(float x = 0.f, float y = 0.f, float z = 0.f, float w = 0.f);
 	~Vector();

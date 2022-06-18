@@ -4,8 +4,6 @@
 
 #include <cmath>
 
-#include <iostream> // !!!
-
 void App::handleTick(double timeStep)
 {
 	double cursorX, cursorY;

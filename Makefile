@@ -1,8 +1,7 @@
 NAME = scop
 
 CXX = clang++
-# CXXFLAGS = -Wall -Wextra -Werror
-CXXFLAGS = -Wall -Wextra
+CXXFLAGS = -Wall -Wextra -Werror
 
 SRCDIR = src
 OBJDIR = obj

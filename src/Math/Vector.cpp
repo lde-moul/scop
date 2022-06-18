@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-#include <iostream> // !!!
-
 float Vector::getLength() const
 {
 	return std::sqrt(x * x + y * y + z * z);
@@ -36,11 +34,6 @@ Vector Vector::operator*(float other) const
 Vector Vector::operator/(float other) const
 {
 	return Vector(x / other, y / other, z / other, w / other);
-}
-
-void Vector::dump()
-{
-	std::cout << x << " " << y << " " << z << " " << w << std::endl;
 }
 
 Vector::Vector(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}

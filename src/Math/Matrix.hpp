@@ -17,7 +17,6 @@ public:
 	float operator()(size_t row, size_t column) const;
 	float & operator()(size_t row, size_t column);
 	Matrix operator*(Matrix const & other) const;
-	void dump();
 
 	Matrix(bool identity = false);
 	~Matrix();

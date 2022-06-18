@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-#include <iostream> // !!!
-
 Quaternion Quaternion::getRotation(Vector axis, float angle)
 {
 	axis = axis.normalize();
@@ -124,11 +122,6 @@ Quaternion Quaternion::operator*(Quaternion const & other) const
 Quaternion Quaternion::operator*(float other) const
 {
 	return Quaternion(x * other, y * other, z * other, w * other);
-}
-
-void Quaternion::dump()
-{
-	std::cout << x << " " << y << " " << z << " " << w << std::endl;
 }
 
 Quaternion::Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}

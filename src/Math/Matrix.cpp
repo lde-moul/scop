@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-#include <iostream> // !!!
-
 Matrix Matrix::translation(float x, float y, float z)
 {
 	Matrix matrix(true);
@@ -72,19 +70,6 @@ Matrix Matrix::operator*(Matrix const & other) const
 	}
 
 	return result;
-}
-
-void Matrix::dump()
-{
-	for (size_t r = 0; r < 4; r++)
-	{
-		for (size_t c = 0; c < 4; c++)
-		{
-			std::cout << matrix[r][c] << " ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
 }
 
 Matrix::Matrix(bool identity)

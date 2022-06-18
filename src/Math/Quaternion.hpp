@@ -26,7 +26,6 @@ public:
 	Quaternion operator-(Quaternion const & other) const;
 	Quaternion operator*(Quaternion const & other) const;
 	Quaternion operator*(float other) const;
-	void dump();
 
 	Quaternion(float x, float y, float z, float w);
 	Quaternion();
