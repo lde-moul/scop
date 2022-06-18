@@ -14,6 +14,8 @@ GLuint GLBuffer::getStride() const
 void GLBuffer::bind()
 {
 	glBindBuffer(type, id);
+	if (glGetError())
+		throw GLError("failed to bind buffer");
 }
 
 void GLBuffer::set(GLenum type, void const *data, GLsizeiptr size, GLsizei stride)
@@ -24,6 +26,8 @@ void GLBuffer::set(GLenum type, void const *data, GLsizeiptr size, GLsizei strid
 	this->stride = stride;
 
 	glCreateBuffers(1, &id);
+	if (glGetError())
+		throw GLError("failed to create buffer");
 
 	glNamedBufferData(id, size, data, GL_STATIC_DRAW);
 	if (glGetError())

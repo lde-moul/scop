@@ -121,11 +121,22 @@ void Model::parseVertex(std::vector<std::string> const & instruction)
 {
 	assertParameterQuantity(instruction, 3, 3);
 
-	float x = std::stof(instruction[1]);
-	float y = std::stof(instruction[2]);
-	float z = std::stof(instruction[3]);
+	try
+	{
+		float x = std::stof(instruction[1]);
+		float y = std::stof(instruction[2]);
+		float z = std::stof(instruction[3]);
 
-	vertices.emplace_back(Vertex(Vector(x, y, z)));
+		vertices.emplace_back(Vertex(Vector(x, y, z)));
+	}
+	catch (std::invalid_argument)
+	{
+		throw Model::LoadError("cannot parse vertex position");
+	}
+	catch (std::out_of_range)
+	{
+		throw Model::LoadError("vertex position out of range");
+	}
 }
 
 void Model::parseFace(std::vector<std::string> const & instruction)
@@ -135,7 +146,18 @@ void Model::parseFace(std::vector<std::string> const & instruction)
 	Face face;
 	for (auto param = instruction.begin() + 1; param != instruction.end(); param++)
 	{
-		face.addVertex(std::stoul(*param));
+		try
+		{
+			face.addVertex(std::stoul(*param));
+		}
+		catch (std::invalid_argument)
+		{
+			throw Model::LoadError("cannot parse face ID");
+		}
+		catch (std::out_of_range)
+		{
+			throw Model::LoadError("face ID out of range");
+		}
 	}
 
 	std::vector<Face> subFaces = face.getTriangulatedFaces();
@@ -178,6 +200,15 @@ void Model::load(std::string fileName)
 			parseVertex(instruction);
 		else if (instruction[0] == "f")
 			parseFace(instruction);
+	}
+
+	for (auto const & face : faces)
+	{
+		for (auto id : face.getVertexIDs())
+		{
+			if (id < 1 || id > vertices.size())
+				throw Model::LoadError("face contains an invalid vertex identifier");
+		}
 	}
 
 	recenter();

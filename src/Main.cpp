@@ -23,6 +23,8 @@ static GLFWwindow *createWindow()
 		throw GLError(reinterpret_cast<char const *>(glewGetErrorString(error)));
 
 	glViewport(0, 0, 1024, 1024);
+	if (glGetError())
+		throw GLError("failed to set viewport");
 
 	return window;
 }

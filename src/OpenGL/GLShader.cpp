@@ -30,6 +30,8 @@ void GLShader::load(GLenum type, std::string const & fileName)
 
 	char const * rawCode = code.data();
 	glShaderSource(id, 1, &rawCode, nullptr);
+	if (glGetError())
+		throw GLError("failed to set shader source");
 
 	glCompileShader(id);
 

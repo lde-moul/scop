@@ -9,6 +9,8 @@ GLuint GLTexture::getID() const
 void GLTexture::bind()
 {
 	glBindTexture(GL_TEXTURE_2D, id);
+	if (glGetError())
+		throw GLError("failed to bind texture");
 }
 
 void GLTexture::set(TGA const & tga)
@@ -16,6 +18,9 @@ void GLTexture::set(TGA const & tga)
 	glDeleteTextures(1, &id);
 
 	glCreateTextures(GL_TEXTURE_2D, 1, &id);
+	if (glGetError())
+		throw GLError("failed to create texture");
+
 	bind();
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tga.getWidth(), tga.getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, tga.getPixels());
@@ -26,6 +31,8 @@ void GLTexture::set(TGA const & tga)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	if (glGetError())
+		throw GLError("failed to set texture parameters");
 }
 
 GLTexture::GLTexture() : id(0) {}

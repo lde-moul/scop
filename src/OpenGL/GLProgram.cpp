@@ -4,6 +4,8 @@
 void GLProgram::attachShader(GLShader const & shader)
 {
 	glAttachShader(id, shader.getID());
+	if (glGetError())
+		throw GLError("failed to attach shader");
 }
 
 void GLProgram::link()
@@ -32,11 +34,16 @@ void GLProgram::reset()
 void GLProgram::use()
 {
 	glUseProgram(id);
+	if (glGetError())
+		throw GLError("failed to use program");
 }
 
 void GLProgram::setUniform(std::string const & name, Matrix const & matrix)
 {
 	GLint location = glGetUniformLocation(id, name.c_str());
+	if (glGetError())
+		throw GLError("failed to get uniform location");
+
 	glProgramUniformMatrix4fv(id, location, 1, GL_TRUE, matrix.getArray());
 }
 

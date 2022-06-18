@@ -152,8 +152,12 @@ void App::drawBackground()
 
 	glDisable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	if (glGetError())
+		throw GLError("failed to set drawing parameters");
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	if (glGetError())
+		throw GLError("failed to draw vertices");
 }
 
 Matrix App::createModelMatrix()
@@ -196,9 +200,14 @@ void App::drawModel()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
+	if (glGetError())
+		throw GLError("failed to set drawing parameters");
+
 	texture.bind();
 
 	glDrawElements(GL_TRIANGLES, vertexIndices.size(), GL_UNSIGNED_INT, 0);
+	if (glGetError())
+		throw GLError("failed to draw vertices");
 }
 
 void App::loop()
@@ -213,6 +222,8 @@ void App::loop()
 
 		glClearColor(0.2f, 0.2f, 0.25f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		if (glGetError())
+			throw GLError("failed to clear buffers");
 
 		drawBackground();
 		drawModel();
@@ -273,6 +284,8 @@ void App::initialiseRendering()
 {
 	glDepthFunc(GL_GREATER);
 	glClearDepthf(0.f);
+	if (glGetError())
+		throw GLError("failed to set depth buffer parameters");
 
 	loadShaders();
 

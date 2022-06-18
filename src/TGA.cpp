@@ -72,6 +72,8 @@ void TGA::load(std::string const & fileName)
 
 		width = readInt16();
 		height = readInt16();
+		if (width <= 0 || height <= 0)
+			throw TGA::LoadError("dimensions must be positive");
 
 		if (readInt8() != 24)
 			throw TGA::LoadError("unsupported pixel depth");
