@@ -11,10 +11,10 @@ const int numColors = 16;
 
 void main()
 {
-    vec4 a = vec4(0.2f, 0.2f, 0.4f, 1.f);
+    vec4 a = vec4(0.3f, 0.3f, 0.5f, 1.f);
 
-    float color = float(gl_PrimitiveID % numColors) / numColors / 4;
-    vec4 b = vec4(color, color, color + 0.15f, 1.f);
+    float color = 0.1f + float(gl_PrimitiveID % numColors) / numColors / 4;
+    vec4 b = vec4(color, color, color + 0.25f, 1.f);
 
     vec4 c = texture(modelTexture, textureCoord);
 
