@@ -331,6 +331,7 @@ void App::run(std::vector<std::string> const & args)
 
 App::App(GLFWwindow *window) :
 	window(window),
+	cameraRotationSpeed(0),
 	cameraZoom(-5),
 	autoRotating(false),
 	viewType(ViewType::Colors),
