@@ -15,6 +15,8 @@ public:
 	void load(GLenum type, std::string const & fileName);
 
 	GLShader();
+	GLShader(GLShader const & other) = delete;
+	GLShader & operator=(GLShader const & other) = delete;
 	~GLShader();
 
 };

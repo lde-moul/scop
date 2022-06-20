@@ -19,6 +19,8 @@ public:
 	void addAttribute(GLint size, GLenum type, GLboolean normalized, GLuint offset);
 
 	GLVAO();
+	GLVAO(GLVAO const & other) = delete;
+	GLVAO & operator=(GLVAO const & other) = delete;
 	~GLVAO();
 
 };

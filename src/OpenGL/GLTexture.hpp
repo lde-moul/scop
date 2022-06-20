@@ -17,6 +17,8 @@ public:
 	void set(TGA const & tga);
 
 	GLTexture();
+	GLTexture(GLTexture const & other) = delete;
+	GLTexture & operator=(GLTexture const & other) = delete;
 	~GLTexture();
 
 };

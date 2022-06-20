@@ -22,6 +22,8 @@ public:
 	void setUniform(std::string const & name, Matrix const & matrix);
 
 	GLProgram();
+	GLProgram(GLProgram const & other) = delete;
+	GLProgram & operator=(GLProgram const & other) = delete;
 	~GLProgram();
 
 };

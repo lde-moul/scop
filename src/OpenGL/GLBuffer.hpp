@@ -20,6 +20,8 @@ public:
 	void set(GLenum type, void const *data, GLsizeiptr size, GLsizei stride);
 
 	GLBuffer();
+	GLBuffer(GLBuffer const & other) = delete;
+	GLBuffer & operator=(GLBuffer const & other) = delete;
 	~GLBuffer();
 
 };
